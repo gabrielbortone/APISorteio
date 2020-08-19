@@ -2,8 +2,6 @@
 using APISorteio.Models;
 using Dapper;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -66,7 +64,8 @@ namespace APISorteio.Data.Repositories
         public async Task<int> Update(Endereco entity)
         {
             var sql = "Update Endereco SET Logradouro = @Logradouro, Bairro = @Bairro, " +
-                "Cidade = @Cidade, Estado = @Estado, Pais = @Pais";
+                "Cidade = @Cidade, Estado = @Estado, Pais = @Pais" +
+                "WHERE EnderecoId = @EnderecoId";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();

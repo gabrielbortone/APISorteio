@@ -43,7 +43,7 @@ namespace APISorteio.Data.Repositories
 
         public async Task<Sorteio> Get(int id)
         {
-            var sql = "SELECT * FROM WHERE SorteioId = @Id";
+            var sql = "SELECT * FROM Sorteio WHERE SorteioId = @Id";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -67,7 +67,8 @@ namespace APISorteio.Data.Repositories
         {
             var sql = "UPDATE Sorteio SET Titulo = @Titulo, Descricao = @Descricao, " +
                 "Premio = @Premio, NumGanhadores = @NumGanhadores, Id_Administrador = @Id_Administrador, " +
-                "DataFinalizacaoCadastro = @DataFinalizacaoCadastro, DataSorteio = @DataSorteio";
+                "DataFinalizacaoCadastro = @DataFinalizacaoCadastro, DataSorteio = @DataSorteio" +
+                "WHERE SorteioId = @SorteioId";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();

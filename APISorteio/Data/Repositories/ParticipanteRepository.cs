@@ -64,7 +64,8 @@ namespace APISorteio.Data.Repositories
         public async Task<int> Update(Participante entity)
         {
             var sql = "UPDATE Participante SET Nome = @Nome, Sobrenome = @Sobrenome," +
-                "CPF = @CPF, Email = @Email, Telefone = @Telefone, Id_Endereco = @Id_Endereco";
+                "CPF = @CPF, Email = @Email, Telefone = @Telefone, Id_Endereco = @Id_Endereco" +
+                "WHERE ParticipanteId = @ParticipanteId";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
