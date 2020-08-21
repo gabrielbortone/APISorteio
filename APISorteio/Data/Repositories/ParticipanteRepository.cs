@@ -41,7 +41,7 @@ namespace APISorteio.Data.Repositories
 
         public async Task<Participante> Get(int id)
         {
-            var sql = "SELECT * FROM Participante WHERE Participante = @Id";
+            var sql = "SELECT * FROM Participante WHERE ParticipanteId = @Id";
             using(var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -58,6 +58,17 @@ namespace APISorteio.Data.Repositories
                 connection.Open();
                 var result = await connection.QueryAsync<Participante>(sql);
                 return (IQueryable<Participante>)result;
+            }
+        }
+
+        public async Task<Participante> GetParticipanteByCPF(string _CPF)
+        {
+            var sql = "SELECT * FROM Participante WHERE CPF = @CPF";
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = await connection.QueryAsync<Participante>(sql, new { CPF = _CPF });
+                return result.FirstOrDefault();
             }
         }
 

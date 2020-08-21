@@ -1,17 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using APISorteio.Data.Repositories;
 using APISorteio.Data.Repositories.Interfaces;
+using APISorteio.DTOs.Mappings;
+using APISorteio.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace APISorteio
 {
@@ -28,6 +24,16 @@ namespace APISorteio
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.AddIdentity<Administrador, ApplicationRole>();
+
             services.AddTransient<IEnderecoRepository, EnderecoRepository>();
             services.AddTransient<IParticipanteRepository, ParticipanteRepository>();
             services.AddTransient<ISorteioRepository, SorteioRepository>();
@@ -47,6 +53,7 @@ namespace APISorteio
             app.UseRouting();
 
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
