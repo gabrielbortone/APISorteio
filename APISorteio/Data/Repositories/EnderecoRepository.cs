@@ -2,6 +2,8 @@
 using APISorteio.Models;
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,14 +52,14 @@ namespace APISorteio.Data.Repositories
             }
         }
 
-        public async Task<IQueryable<Endereco>> GetAll()
+        public async Task<IEnumerable<Endereco>> GetAll()
         {
             var sql = "SELECT * FROM Endereco";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 var result = await connection.QueryAsync<Endereco>(sql);
-                return (IQueryable<Endereco>)result;
+                return result;
             }
         }
 

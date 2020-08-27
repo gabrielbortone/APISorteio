@@ -2,6 +2,7 @@
 using APISorteio.Models;
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace APISorteio.Data.Repositories
             }
         }
 
-        public async Task<IQueryable<Sorteio>> GetAll()
+        public async Task<IEnumerable<Sorteio>> GetAll()
         {
             var sql = "SELECT * FROM Sorteio";
             using (var connection = new SqlConnection(_connectionString))

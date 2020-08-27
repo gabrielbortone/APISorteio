@@ -3,6 +3,7 @@ using APISorteio.Models;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace APISorteio.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IQueryable<ParticipanteSorteio>> GetAll()
+        public async Task<IEnumerable<ParticipanteSorteio>> GetAll()
         {
             var sql = "SELECT * FROM ParticipanteSorteio";
             using (var connection = new SqlConnection(_connectionString))
@@ -59,25 +60,25 @@ namespace APISorteio.Data.Repositories
             }
         }
 
-        public async Task<ParticipanteSorteio> GetByParticipante(int id)
+        public async Task<IEnumerable<ParticipanteSorteio>> GetByParticipante(int id)
         {
             var sql = "SELECT * FROM ParticipanteSorteio WHERE ParticipanteId = @Id";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 var result = await connection.QueryAsync<ParticipanteSorteio>(sql, new { Id = id });
-                return result.FirstOrDefault();
+                return (IEnumerable<ParticipanteSorteio>)result.FirstOrDefault();
             }
         }
 
-        public async Task<ParticipanteSorteio> GetBySorteio(int id)
+        public async Task<IEnumerable<ParticipanteSorteio>> GetBySorteio(int id)
         {
             var sql = "SELECT * FROM ParticipanteSorteio WHERE SorteioId = @Id";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 var result = await connection.QueryAsync<ParticipanteSorteio>(sql, new { Id = id });
-                return result.FirstOrDefault();
+                return (IEnumerable<ParticipanteSorteio>)result.FirstOrDefault();
             }
         }
 

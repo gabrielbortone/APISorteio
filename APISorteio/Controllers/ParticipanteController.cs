@@ -5,7 +5,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 
 namespace APISorteio.Controllers
@@ -58,7 +57,7 @@ namespace APISorteio.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ParticipanteDTO participanteDTO)
+        public async Task<IActionResult> Post([FromBody] ParticipanteCadastroDTO participanteDTO)
         {
             var aux = ParticipanteRepository.GetParticipanteByCPF(participanteDTO.CPF);
 
@@ -73,7 +72,7 @@ namespace APISorteio.Controllers
                 var endereco = participante.Endereco;
 
                 endereco.EnderecoId = await EnderecoRepository.Add(endereco);
-                ParticipanteRepository.Add(participante);
+                participanteDTO.ParticipanteId = await ParticipanteRepository.Add(participante);
 
                 return new CreatedAtRouteResult("Get",
                     new { id = participanteDTO.ParticipanteId }, participanteDTO);

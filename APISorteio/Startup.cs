@@ -3,6 +3,7 @@ using APISorteio.Data.Repositories;
 using APISorteio.Data.Repositories.Interfaces;
 using APISorteio.DTOs.Mappings;
 using APISorteio.Models;
+using APISorteio.Service;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +42,7 @@ namespace APISorteio
             services.AddTransient<IParticipanteRepository, ParticipanteRepository>();
             services.AddTransient<ISorteioRepository, SorteioRepository>();
             services.AddTransient<IParticipanteSorteioRepository, ParticipanteSorteioRepository>();
+            services.AddScoped<SorteioService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
