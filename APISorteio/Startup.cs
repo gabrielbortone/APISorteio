@@ -1,7 +1,6 @@
 using APISorteio.Data;
 using APISorteio.Data.Repositories;
 using APISorteio.Data.Repositories.Interfaces;
-using APISorteio.DTOs.Mappings;
 using APISorteio.Models;
 using APISorteio.Service;
 using AutoMapper;
@@ -25,13 +24,6 @@ namespace APISorteio
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
 
             services.AddIdentity<Administrador, ApplicationRole>()
                 .AddDefaultTokenProviders();

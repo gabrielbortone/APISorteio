@@ -14,39 +14,37 @@ namespace APISorteio.Controllers
     public class EnderecoController : ControllerBase
     {
         private IEnderecoRepository EnderecoRepository;
-        private IMapper _mapper;
         public EnderecoController(IEnderecoRepository enderecoRepository, IMapper mapper)
         {
             EnderecoRepository = enderecoRepository;
-            _mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var enderecos = EnderecoRepository.GetAll();
+            var enderecos = await EnderecoRepository.GetAll();
 
             if (enderecos == null)
             {
                 return NoContent();
             }
 
-            var enderecoDTOs = _mapper.Map<List<EnderecoDTO>>(enderecos);
+            var enderecoDTOs = ConvertToDTOs(enderecos);
 
             return Ok(enderecoDTOs);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var endereco = EnderecoRepository.Get(id);
+            var endereco = await EnderecoRepository.Get(id);
 
             if (endereco == null)
             {
                 return NotFound();
             }
 
-            var enderecoDTO = _mapper.Map<EnderecoDTO>(endereco);
+            var enderecoDTO = ConvertToDTO(endereco);
 
             return Ok(enderecoDTO);
         }
@@ -56,7 +54,7 @@ namespace APISorteio.Controllers
         {
             try
             {
-                var endereco = _mapper.Map<Endereco>(enderecoDTO);
+                var endereco = ConvertToEndereco(enderecoDTO);
                 endereco.EnderecoId = await EnderecoRepository.Add(endereco);
 
                 return new CreatedAtRouteResult("Get",
@@ -70,7 +68,7 @@ namespace APISorteio.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] EnderecoDTO enderecoDTO)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] EnderecoDTO enderecoDTO)
         {
             if (id != enderecoDTO.EnderecoId)
             {
@@ -79,8 +77,8 @@ namespace APISorteio.Controllers
 
             try
             {
-                var endereco = _mapper.Map<Endereco>(enderecoDTO);
-                EnderecoRepository.Update(endereco);
+                var endereco = ConvertToEndereco(enderecoDTO);
+                await EnderecoRepository.Update(endereco);
                 return Ok(enderecoDTO);
             }
             catch (Exception ex)
@@ -90,18 +88,42 @@ namespace APISorteio.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var endereco = EnderecoRepository.Get(id);
+            var endereco = await EnderecoRepository.Get(id);
             if (endereco == null)
             {
                 return NotFound();
             }
 
-            var enderecoDto = _mapper.Map<EnderecoDTO>(endereco);
-            EnderecoRepository.Delete(id);
+            var enderecoDto = ConvertToDTO(endereco);
+            await EnderecoRepository.Delete(id);
 
             return Ok(enderecoDto);
+        }
+
+        private List<EnderecoDTO> ConvertToDTOs(IEnumerable<Endereco> enderecos)
+        {
+            List<EnderecoDTO> ListaEnderecosDtos = new List<EnderecoDTO>();
+            foreach(Endereco e in enderecos)
+            {
+                EnderecoDTO aux = new EnderecoDTO(e.Logradouro, e.Bairro, e.Cidade, e.Estado, e.Pais);
+                ListaEnderecosDtos.Add(aux);
+            }
+            return ListaEnderecosDtos;
+        }
+
+        private EnderecoDTO ConvertToDTO(Endereco endereco)
+        {
+            EnderecoDTO aux = new EnderecoDTO(endereco.Logradouro, endereco.Bairro, endereco.Cidade, endereco.Estado, endereco.Pais);
+            return aux;
+        }
+
+        private Endereco ConvertToEndereco(EnderecoDTO enderecoDTO)
+        {
+            Endereco aux = new Endereco(enderecoDTO.Logradouro, enderecoDTO.Bairro, enderecoDTO.Cidade,
+                enderecoDTO.Estado, enderecoDTO.Pais);
+            return aux;
         }
     }
 }

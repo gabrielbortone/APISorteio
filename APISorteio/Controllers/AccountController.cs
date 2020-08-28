@@ -22,13 +22,9 @@ namespace APISorteio.Controllers
             _signInManager = signInManager;
         }
 
-        [TempData]
-        public string ErrorMessage { get; set; }
-
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(AdministradorDTO model, string returnUrl = null)
+        public async Task<IActionResult> Login(AdministradorDTO model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
@@ -41,7 +37,6 @@ namespace APISorteio.Controllers
 
 
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(AdministradorDTO model)
         {
@@ -62,8 +57,5 @@ namespace APISorteio.Controllers
             await _signInManager.SignOutAsync();
             return Ok();
         }
-
-        
-
     }
 }

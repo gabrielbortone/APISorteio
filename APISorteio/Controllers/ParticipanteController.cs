@@ -1,7 +1,6 @@
 ﻿using APISorteio.Data.Repositories.Interfaces;
 using APISorteio.DTOs;
 using APISorteio.Models;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,42 +15,40 @@ namespace APISorteio.Controllers
         private IParticipanteRepository ParticipanteRepository;
         private IEnderecoRepository EnderecoRepository;
         private IParticipanteSorteioRepository ParticipanteSorteioRepository;
-        private IMapper _mapper;
         public ParticipanteController(IParticipanteRepository participanteRepository, IParticipanteSorteioRepository participanteSorteioRepository, 
-            IEnderecoRepository enderecoRepository, IMapper mapper)
+            IEnderecoRepository enderecoRepository)
         {
             ParticipanteRepository = participanteRepository;
             ParticipanteSorteioRepository = participanteSorteioRepository;
             EnderecoRepository = enderecoRepository;
-            _mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAsync()
         {
-            var participantes = ParticipanteRepository.GetAll();
+            var participantes = await ParticipanteRepository.GetAll();
 
             if(participantes == null)
             {
                 return NoContent();
             }
 
-            var participanteDTOs = _mapper.Map<List<ParticipanteDTO>>(participantes);
+            var participanteDTOs = ConvertToListDTO(participantes);
 
             return Ok(participanteDTOs);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var participante = ParticipanteRepository.Get(id);
+            var participante = await ParticipanteRepository.Get(id);
 
             if (participante == null)
             {
                 return NotFound();
             }
 
-            var participanteDTO = _mapper.Map<ParticipanteDTO>(participante);
+            var participanteDTO = ConvertToDTO(participante);
 
             return Ok(participanteDTO);
         }
@@ -68,7 +65,7 @@ namespace APISorteio.Controllers
 
             try
             {
-                var participante = _mapper.Map<Participante>(participanteDTO);
+                var participante = ConvertToParticipante(participanteDTO);
                 var endereco = participante.Endereco;
 
                 endereco.EnderecoId = await EnderecoRepository.Add(endereco);
@@ -85,7 +82,7 @@ namespace APISorteio.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] ParticipanteDTO participanteDTO)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] ParticipanteCompletoDTO participanteDTO)
         {
             if(id != participanteDTO.ParticipanteId)
             {
@@ -94,8 +91,8 @@ namespace APISorteio.Controllers
 
             try
             {
-                var participante = _mapper.Map<Participante>(participanteDTO);
-                ParticipanteRepository.Update(participante);
+                var participante = ConvertToParticipante(participanteDTO);
+                await ParticipanteRepository.Update(participante);
                 return Ok(participanteDTO);
             }
             catch(Exception ex)
@@ -105,19 +102,50 @@ namespace APISorteio.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var participante = ParticipanteRepository.Get(id);
+            var participante = await ParticipanteRepository.Get(id);
             if(participante == null)
             {
                 return NotFound();
             }
 
-            var participanteDto = _mapper.Map<ParticipanteDTO>(participante);
-            ParticipanteRepository.Delete(id);
+            var participanteDto = ConvertToDTO(participante);
+            await ParticipanteRepository.Delete(id);
 
             return Ok(participanteDto);
         }
 
+        private List<ParticipanteDTO> ConvertToListDTO(IEnumerable<Participante> participantes)
+        {
+            List<ParticipanteDTO> listaParticipanteDTO = new List<ParticipanteDTO>();
+            foreach (Participante p in participantes)
+            {
+                ParticipanteDTO auxDto = new ParticipanteDTO(p.Nome,p.Sobrenome, p.Email, p.Telefone);
+                listaParticipanteDTO.Add(auxDto);
+            }
+            return listaParticipanteDTO;
+        }
+
+        private ParticipanteDTO ConvertToDTO(Participante participantes)
+        {
+            ParticipanteDTO auxDto = new ParticipanteDTO(participantes.Nome, participantes.Sobrenome, participantes.Email, participantes.Telefone);
+            return auxDto;
+        }
+
+        private Participante ConvertToParticipante(ParticipanteCadastroDTO participante)
+        {
+            Endereco endereco = new Endereco(participante.EnderecoDTO.Logradouro, participante.EnderecoDTO.Bairro,
+                participante.EnderecoDTO.Cidade, participante.EnderecoDTO.Estado, participante.EnderecoDTO.Pais);
+            Participante aux = new Participante(participante.Nome, participante.Sobrenome, participante.CPF,
+                participante.Email, participante.Telefone, endereco);
+            return aux;
+        }
+
+        private Participante ConvertToParticipante(ParticipanteCompletoDTO participante)
+        {
+            Participante aux = new Participante(participante.Nome, participante.Sobrenome, participante.CPF,participante.Email, participante.Telefone);
+            return aux;
+        }
     }
 }

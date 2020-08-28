@@ -12,5 +12,30 @@ namespace APISorteio.Models
         public Administrador Administrador { get; set; }
         public DateTime DataFinalizacaoCadastro { get; set; }
         public DateTime DataSorteio { get; set; }
+
+        public Sorteio(string titulo, string descricao, string premio, int numeroDeGanhadores, 
+            Administrador administrador, DateTime dataFinalizacaoCadastro, DateTime dataSorteio)
+        {
+            Titulo = titulo;
+            Descricao = descricao;
+            Premio = premio;
+            NumeroDeGanhadores = numeroDeGanhadores;
+            Administrador = administrador;
+            DataFinalizacaoCadastro = dataFinalizacaoCadastro;
+            DataSorteio = dataSorteio;
+        }
+
+        public Sorteio(int sorteioId, string titulo, string descricao, string premio, int numeroDeGanhadores, 
+            Administrador administrador, DateTime dataFinalizacaoCadastro, DateTime dataSorteio)
+        {
+            SorteioId = sorteioId;
+            Titulo = titulo;
+            Descricao = descricao;
+            Premio = premio;
+            NumeroDeGanhadores = numeroDeGanhadores;
+            Administrador = administrador;
+            DataFinalizacaoCadastro = dataFinalizacaoCadastro;
+            DataSorteio = dataSorteio;
+        }
     }
 }

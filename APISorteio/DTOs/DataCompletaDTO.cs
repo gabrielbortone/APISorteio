@@ -5,6 +5,15 @@ namespace APISorteio.DTOs
 {
     public class DataCompletaDTO
     {
+        public DataCompletaDTO(int ano, int mes, int dia, int hora, int minuto)
+        {
+            Ano = ano;
+            Mes = mes;
+            Dia = dia;
+            Hora = hora;
+            Minuto = minuto;
+        }
+
         [Required]
         [Range(2000, 2020)]
         public int Ano { get; set; }
