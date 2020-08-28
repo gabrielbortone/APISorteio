@@ -1,6 +1,5 @@
 ﻿using APISorteio.DTOs;
 using APISorteio.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -31,7 +30,6 @@ namespace APISorteio.Controllers
             {
                 return Ok();
             }
-            // If we got this far, something failed, redisplay form
             return BadRequest(model);
         }
 

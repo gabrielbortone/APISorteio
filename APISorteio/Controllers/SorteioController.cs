@@ -1,6 +1,8 @@
 ﻿using APISorteio.Data.Repositories.Interfaces;
 using APISorteio.DTOs;
 using APISorteio.Models;
+using APISorteio.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,15 +13,19 @@ namespace APISorteio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SorteioController : ControllerBase
     {
         private ISorteioRepository SorteioRepository;
         private readonly UserManager<Administrador> _userManager;
+        private SorteioService SorteioService;
 
-        public SorteioController(ISorteioRepository sorteioRepository, UserManager<Administrador> userManager)
+        public SorteioController(ISorteioRepository sorteioRepository, UserManager<Administrador> userManager,
+            SorteioService sorteioService)
         {
             SorteioRepository = sorteioRepository;
             _userManager = userManager;
+            SorteioService = sorteioService;
         }
 
         [HttpGet]
@@ -38,7 +44,7 @@ namespace APISorteio.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var sorteio = await SorteioRepository.Get(id);
 
@@ -71,8 +77,27 @@ namespace APISorteio.Controllers
             
         }
 
+        [HttpPost("GetVencedoresSorteio")]
+        public async Task<IActionResult> PostRealizarSorteio([FromBody] SorteioDTO sorteioDto)
+        {
+            try
+            {
+                var sorteio = await ConvertToSorteio(sorteioDto);
+
+                var vencedores = await SorteioService.GetVencedoresSorteio(sorteio);
+
+                return Ok(vencedores);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] SorteioDTO sorteioDto)
+        public async Task<IActionResult> Put(int id, [FromBody] SorteioDTO sorteioDto)
         {
             if(id != sorteioDto.SorteioId)
             {
