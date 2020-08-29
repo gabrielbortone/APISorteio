@@ -3,7 +3,6 @@ using APISorteio.Data.Repositories;
 using APISorteio.Data.Repositories.Interfaces;
 using APISorteio.Models;
 using APISorteio.Service;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +22,7 @@ namespace APISorteio
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
 
             services.AddIdentity<Administrador, ApplicationRole>()
                 .AddDefaultTokenProviders();

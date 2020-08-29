@@ -1,7 +1,6 @@
 ﻿using APISorteio.Data.Repositories.Interfaces;
 using APISorteio.DTOs;
 using APISorteio.Models;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ namespace APISorteio.Controllers
     public class EnderecoController : ControllerBase
     {
         private IEnderecoRepository EnderecoRepository;
-        public EnderecoController(IEnderecoRepository enderecoRepository, IMapper mapper)
+        public EnderecoController(IEnderecoRepository enderecoRepository)
         {
             EnderecoRepository = enderecoRepository;
         }

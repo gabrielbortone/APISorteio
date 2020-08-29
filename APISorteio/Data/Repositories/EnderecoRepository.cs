@@ -21,12 +21,12 @@ namespace APISorteio.Data.Repositories
         public async Task<int> Add(Endereco entity)
         {
             var sql = "INSERT INTO Endereco (Logradouro,Bairro,Cidade,Estado,Pais) " +
-                "VALUES (@Logradouro, @Bairro, @Cidade, @Estado, @Pais)";
+                "VALUES (@Logradouro, @Bairro, @Cidade, @Estado, @Pais); SELECT CAST(SCOPE_IDENTITY() AS INT)";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var affectedRows = await connection.ExecuteAsync(sql, entity);
-                return affectedRows;
+                var result = await connection.QueryAsync<int>(sql, entity);
+                return result.Single();
             }
         }
 

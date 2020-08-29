@@ -24,7 +24,7 @@ namespace APISorteio.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> Get()
         {
             var participantes = await ParticipanteRepository.GetAll();
 
@@ -56,7 +56,7 @@ namespace APISorteio.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ParticipanteCadastroDTO participanteDTO)
         {
-            var aux = ParticipanteRepository.GetParticipanteByCPF(participanteDTO.CPF);
+            var aux = await ParticipanteRepository.GetParticipanteByCPF(participanteDTO.CPF);
 
             if(aux != null)
             {
@@ -68,11 +68,11 @@ namespace APISorteio.Controllers
                 var participante = ConvertToParticipante(participanteDTO);
                 var endereco = participante.Endereco;
 
-                endereco.EnderecoId = await EnderecoRepository.Add(endereco);
-                participanteDTO.ParticipanteId = await ParticipanteRepository.Add(participante);
+                participante.Id_Endereco = await EnderecoRepository.Add(endereco);
+                participante.ParticipanteId = await ParticipanteRepository.Add(participante);
 
                 return new CreatedAtRouteResult("Get",
-                    new { id = participanteDTO.ParticipanteId }, participanteDTO);
+                    new { id = participante.ParticipanteId }, participanteDTO);
             }
             catch(Exception ex)
             {
@@ -82,7 +82,7 @@ namespace APISorteio.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] ParticipanteCompletoDTO participanteDTO)
+        public async Task<IActionResult> Put(int id, [FromBody] ParticipanteCompletoDTO participanteDTO)
         {
             if(id != participanteDTO.ParticipanteId)
             {
@@ -102,7 +102,7 @@ namespace APISorteio.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var participante = await ParticipanteRepository.Get(id);
             if(participante == null)
@@ -135,8 +135,8 @@ namespace APISorteio.Controllers
 
         private Participante ConvertToParticipante(ParticipanteCadastroDTO participante)
         {
-            Endereco endereco = new Endereco(participante.EnderecoDTO.Logradouro, participante.EnderecoDTO.Bairro,
-                participante.EnderecoDTO.Cidade, participante.EnderecoDTO.Estado, participante.EnderecoDTO.Pais);
+            Endereco endereco = new Endereco(participante.Logradouro, participante.Bairro,
+                participante.Cidade, participante.Estado, participante.Pais);
             Participante aux = new Participante(participante.Nome, participante.Sobrenome, participante.CPF,
                 participante.Email, participante.Telefone, endereco);
             return aux;

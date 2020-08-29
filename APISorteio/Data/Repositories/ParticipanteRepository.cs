@@ -2,7 +2,6 @@
 using APISorteio.Models;
 using Dapper;
 using Microsoft.Extensions.Configuration;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -21,12 +20,12 @@ namespace APISorteio.Data.Repositories
         public async Task<int> Add(Participante entity)
         {
             var sql = "INSERT INTO Participante(Nome,Sobrenome, CPF, Email, Telefone, Id_Endereco) " +
-                "VALUES(@Nome, @Sobrenome,@CPF, @Email, @Telefone, @Id_Endereco)";
+                "VALUES(@Nome, @Sobrenome,@CPF, @Email, @Telefone, @Id_Endereco); SELECT CAST(SCOPE_IDENTITY() AS INT)";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var affectedRows = await connection.ExecuteAsync(sql,entity);
-                return affectedRows;
+                var result = await connection.QueryAsync<int>(sql, entity);
+                return result.Single();
             }
         }
 
@@ -59,7 +58,7 @@ namespace APISorteio.Data.Repositories
             {
                 connection.Open();
                 var result = await connection.QueryAsync<Participante>(sql);
-                return (IQueryable<Participante>)result;
+                return result;
             }
         }
 
