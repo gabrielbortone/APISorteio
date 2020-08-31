@@ -1,6 +1,7 @@
 CREATE TABLE [dbo].[Administrador](
 	[ID] int not null Primary key Identity,
 	[UserName] NVARCHAR(256) NOT NULL,
+	[NormalizedUserName] NVARCHAR(256) NOT NULL,
 	[Email] NVARCHAR(256) NULL,
 	[NormalizedEmail] NVARCHAR(256) NULL,
 	[EmailConfirmed] BIT NOT NULL,

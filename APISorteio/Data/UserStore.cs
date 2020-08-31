@@ -30,7 +30,7 @@ namespace APISorteio.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                user.Id = await connection.QuerySingleAsync<int>($@"INSERT INTO [ApplicationUser] ([UserName], [NormalizedUserName], [Email],
+                user.Id = await connection.QuerySingleAsync<int>($@"INSERT INTO [Administrador] ([UserName], [NormalizedUserName], [Email],
                     [NormalizedEmail], [EmailConfirmed], [PasswordHash], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled])
                     VALUES (@{nameof(Administrador.UserName)}, @{nameof(Administrador.NormalizedUserName)}, @{nameof(Administrador.Email)},
                     @{nameof(Administrador.NormalizedEmail)}, @{nameof(Administrador.EmailConfirmed)}, @{nameof(Administrador.PasswordHash)},
@@ -48,7 +48,7 @@ namespace APISorteio.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                await connection.ExecuteAsync($"DELETE FROM [ApplicationUser] WHERE [Id] = @{nameof(Administrador.Id)}", user);
+                await connection.ExecuteAsync($"DELETE FROM [Administrador] WHERE [Id] = @{nameof(Administrador.Id)}", user);
             }
 
             return IdentityResult.Success;
@@ -61,7 +61,7 @@ namespace APISorteio.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                return await connection.QuerySingleOrDefaultAsync<Administrador>($@"SELECT * FROM [ApplicationUser]
+                return await connection.QuerySingleOrDefaultAsync<Administrador>($@"SELECT * FROM [Administrador]
                     WHERE [Id] = @{nameof(userId)}", new { userId });
             }
         }
@@ -73,7 +73,7 @@ namespace APISorteio.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                return await connection.QuerySingleOrDefaultAsync<Administrador>($@"SELECT * FROM [ApplicationUser]
+                return await connection.QuerySingleOrDefaultAsync<Administrador>($@"SELECT * FROM [Administrador]
                     WHERE [NormalizedUserName] = @{nameof(normalizedUserName)}", new { normalizedUserName });
             }
         }
@@ -112,7 +112,7 @@ namespace APISorteio.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                await connection.ExecuteAsync($@"UPDATE [ApplicationUser] SET
+                await connection.ExecuteAsync($@"UPDATE [Administrador] SET
                     [UserName] = @{nameof(Administrador.UserName)},
                     [NormalizedUserName] = @{nameof(Administrador.NormalizedUserName)},
                     [Email] = @{nameof(Administrador.Email)},
@@ -157,7 +157,7 @@ namespace APISorteio.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                return await connection.QuerySingleOrDefaultAsync<Administrador>($@"SELECT * FROM [ApplicationUser]
+                return await connection.QuerySingleOrDefaultAsync<Administrador>($@"SELECT * FROM [Administrador]
                     WHERE [NormalizedEmail] = @{nameof(normalizedEmail)}", new { normalizedEmail });
             }
         }
@@ -261,7 +261,7 @@ namespace APISorteio.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                var queryResults = await connection.QueryAsync<string>("SELECT r.[Name] FROM [ApplicationRole] r INNER JOIN [ApplicationUserRole] ur ON ur.[RoleId] = r.Id " +
+                var queryResults = await connection.QueryAsync<string>("SELECT r.[Name] FROM [Administrador]  INNER JOIN [ApplicationUserRole] ur ON ur.[RoleId] = r.Id " +
                     "WHERE ur.UserId = @userId", new { userId = user.Id });
 
                 return queryResults.ToList();
@@ -274,7 +274,7 @@ namespace APISorteio.Data
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                var roleId = await connection.ExecuteScalarAsync<int?>("SELECT [Id] FROM [ApplicationRole] WHERE [NormalizedName] = @normalizedName", new { normalizedName = roleName.ToUpper() });
+                var roleId = await connection.ExecuteScalarAsync<int?>("SELECT [Id] FROM [Administrador] WHERE [NormalizedName] = @normalizedName", new { normalizedName = roleName.ToUpper() });
                 if (roleId == default(int)) return false;
                 var matchingRoles = await connection.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM [ApplicationUserRole] WHERE [UserId] = @userId AND [RoleId] = @{nameof(roleId)}",
                     new { userId = user.Id, roleId });
@@ -289,7 +289,7 @@ namespace APISorteio.Data
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                var queryResults = await connection.QueryAsync<Administrador>("SELECT u.* FROM [ApplicationUser] u " +
+                var queryResults = await connection.QueryAsync<Administrador>("SELECT u.* FROM [Administrador] u " +
                     "INNER JOIN [ApplicationUserRole] ur ON ur.[UserId] = u.[Id] INNER JOIN [ApplicationRole] r ON r.[Id] = ur.[RoleId] WHERE r.[NormalizedName] = @normalizedName",
                     new { normalizedName = roleName.ToUpper() });
 

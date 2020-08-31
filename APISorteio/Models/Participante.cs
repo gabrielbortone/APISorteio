@@ -10,6 +10,7 @@
         public string Telefone { get; set; }
         public int Id_Endereco { get; set; }
         public Endereco Endereco { get; set; }
+
         public Participante(string nome, string sobrenome, string cPF, string email, string telefone, Endereco endereco)
         {
             Nome = nome;

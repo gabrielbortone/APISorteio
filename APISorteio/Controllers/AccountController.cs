@@ -21,11 +21,10 @@ namespace APISorteio.Controllers
             _signInManager = signInManager;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(AdministradorDTO model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
                 return Ok();
@@ -34,12 +33,17 @@ namespace APISorteio.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(AdministradorDTO model)
         {
-            var user = new Administrador { UserName = model.Email, Email = model.Email };
+            var user = new Administrador { UserName = model.UserName,
+                NormalizedUserName = model.UserName.ToUpper(), Email = model.Email, 
+                NormalizedEmail = model.Email.ToUpper(), EmailConfirmed = true, 
+                PhoneNumberConfirmed = true, TwoFactorEnabled = false,
+                PhoneNumber= model.PhoneNumber };
+
             var result = await _userManager.CreateAsync(user, model.Password);
+
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
@@ -48,8 +52,7 @@ namespace APISorteio.Controllers
             return BadRequest();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
